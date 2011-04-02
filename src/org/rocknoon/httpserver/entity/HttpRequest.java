@@ -1,13 +1,15 @@
 package org.rocknoon.httpserver.entity;
 
+import java.util.HashMap;
+
 public class HttpRequest {
 	
 	
 	private String _method;
 	
-	private String _host;
+	private String _uri;
 	
-	private String _url;
+	private HashMap<String,String> _header;
 	
 	
 	

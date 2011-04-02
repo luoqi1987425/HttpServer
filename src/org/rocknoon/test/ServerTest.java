@@ -7,6 +7,8 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.regex.Pattern;
 
 public class ServerTest {
 
@@ -19,7 +21,7 @@ public class ServerTest {
 		
 		try {
 			
-			ServerSocket ss = new ServerSocket(8081);
+			ServerSocket ss = new ServerSocket(8082);
 			char[] buf = new char[1024];
 			
 			while (true){
@@ -30,11 +32,35 @@ public class ServerTest {
 				Socket socket = ss.accept();
 				System.out.println( "Server accpet" );
 				BufferedReader  in = new BufferedReader (new InputStreamReader(socket.getInputStream()));
-				PrintWriter     out= new PrintWriter(socket.getOutputStream(),true);
-				
-				
+				PrintWriter     out= new PrintWriter(socket.getOutputStream(),true);				
 				
 				in.read( buf );
+				
+				int length = 0;
+				
+				//process buf
+				for( int i = 0; i < 1024 ; i ++ ){
+					
+					if( buf[i] == 0 ){
+						length = i;
+						break;
+					}
+				}
+				
+				String newString = new String(buf , 0 , length);
+				
+				Pattern pattern = Pattern.compile("\r\n");
+				String[] Headers = pattern.split( newString );
+			
+				String[] protocolHeader = Headers[0].split( " " );
+				String method = protocolHeader[0];
+				
+				String[] Header1 = Headers[1].split( ": " );
+				String[] Header2 = Headers[3].split( ": " );
+				
+				HashMap<String,String> headers = new HashMap();
+				headers.put( Header1[0] , Header1[1]);
+				headers.put( Header2[0] , Header2[1]);
 				
 				String response = "";  
 			    response += "HTTP/1.1 200 OK\n";  

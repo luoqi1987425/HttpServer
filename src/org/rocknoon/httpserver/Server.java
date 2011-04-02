@@ -1,6 +1,8 @@
 package org.rocknoon.httpserver;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -13,15 +15,25 @@ import java.net.Socket;
 public class Server {
 	
 	
+	
+	private static int SERVER_HEADER_SIZE = 1024;
+	
+	
 	/**
 	 * the server socket
 	 */
-	public static ServerSocket _servSocket;
+	private ServerSocket _servSocket;
 	
 	/**
 	 * env
 	 */
-	public static String 	   evn;
+	private String 	   _evn;
+	
+	
+	
+	
+	
+	
 	
 	
 	/**
@@ -79,8 +91,24 @@ public class Server {
 	}
 		
 	private void _buildHttpRequest( Socket socket ){
-	
 		
+		char[] buf = new char[this.SERVER_HEADER_SIZE];
+		BufferedReader in = new BufferedReader (new InputStreamReader(socket.getInputStream()));
+		in.read( buf );
+		
+		//detect buf ending
+		int length = 0;
+		for( int i = 0; i < this.SERVER_HEADER_SIZE ; i ++ ){
+			if( buf[i] == 0 ){
+				length = i;
+				break;
+			}
+		}
+		
+		
+		String newString = new String(buf , 0 , length);
+		
+		HttpRequestBuilder.Build( buf );
 	
 	}
 
